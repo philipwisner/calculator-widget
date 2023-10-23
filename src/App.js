@@ -13,7 +13,7 @@ const App = () => {
   };
 
   return (
-    <div style={{ height: "400px", width: "100%" }}>
+    <div style={{ height: "400px", width: "100%", fontFamily: "Open Sans" }}>
       <Calculator onNewInput={handleInput} onResultChange={onResultChange} />
     </div>
   );
