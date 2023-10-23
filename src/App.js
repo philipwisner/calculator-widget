@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import Calculator from "awesome-react-calculator";
 
-function App() {
+const App = () => {
+  const handleInput = (input) => {
+    console.log(
+      `${input.expression} is shown in the calculator, User clicked the ${input.key}`
+    );
+  };
+
+  const onResultChange = (newResult) => {
+    console.log(newResult);
+    console.log(`${newResult.expression} is validated as ${newResult.result} `);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ height: "400px", width: "100%" }}>
+      <Calculator onNewInput={handleInput} onResultChange={onResultChange} />
     </div>
   );
-}
+};
 
 export default App;
