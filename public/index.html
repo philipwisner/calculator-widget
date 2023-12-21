@@ -40,4 +40,11 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <script>
+    const openAppEvent = new CustomEvent('assetmap.glass.tray.open', {
+      detail: { appName: 'Calculator App' },
+    });
+    const calc = document.querySelector('root');
+    calc.dispatchEvent(readyAppEvent);
+  </script>
 </html>
