@@ -41,10 +41,80 @@
     -->
   </body>
   <script>
-    const openAppEvent = new CustomEvent('assetmap.glass.tray.open', {
-      detail: { appName: 'Calculator App' },
+    let calcApp = document.getElementById('root')
+    
+    // EVENT TRIGGERS
+    calcApp.addEventListener('click', e => {
+      if ('dataset' in e.target) {
+        // assetmap.glass.tray.open
+        if (e.target.dataset.value == '/') {
+          window.parent.postMessage(
+            {
+              source: 'Calculator Applet',
+              payload: {
+                type: 'assetmap.glass.tray.open',
+                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.open event.`,
+              }
+            },
+            'http://localhost:8000/ampux/household'
+          )
+        }
+        
+        // assetmap.glass.tray.ready
+        if (e.target.dataset.value == '*') {
+          window.parent.postMessage(
+            {
+              source: 'Calculator Applet',
+              payload: {
+                type: 'assetmap.glass.tray.ready',
+                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.ready event`,
+              }
+            },
+            'http://localhost:8000/ampux/household'
+          )
+        }
+
+        // assetmap.glass.tray.hide
+        if (e.target.dataset.value == '-') {
+          window.parent.postMessage(
+            {
+              source: 'Calculator Applet',
+              payload: {
+                type: 'assetmap.glass.tray.hide',
+                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.hide event.`,
+              }
+            },
+            'http://localhost:8000/ampux/household'
+          )
+        }
+
+        // assetmap.glass.tray.close
+        if (e.target.dataset.value == '+') {
+          window.parent.postMessage(
+            {
+              source: 'Calculator Applet',
+              payload: {
+                type: 'assetmap.glass.tray.close',
+                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.close event.`
+              }
+            },
+            'http://localhost:8000/ampux/household'
+          )
+        }
+      }
     });
-    const calc = document.querySelector('root');
-    calc.dispatchEvent(readyAppEvent);
+    
+    // EVENT LISTENERS
+    const handler = (ev) => {
+      if (typeof ev.data !== 'object') return;
+      if (!('payload' in ev.data)) return;
+      if (!('type' in ev.data.payload)) return;
+      if (!ev.data?.payload.type.startsWith('assetmap')) return;
+      if (!ev.data?.payload.type === 'assetmap.amr.click') return;
+      console.log(ev.data.payload.message);
+    };
+
+    console.log('adding event listener to pick up click events from the amr');
+    window.addEventListener('message', handler)
   </script>
 </html>
