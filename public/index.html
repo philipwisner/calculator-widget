@@ -111,10 +111,9 @@
       if (!('type' in ev.data.payload)) return;
       if (!ev.data?.payload.type.startsWith('assetmap')) return;
       if (!ev.data?.payload.type === 'assetmap.amr.click') return;
-      console.log(ev.data.payload.message);
+      console.log(`Calculator Applet - ${ev.data.payload.type}`);
     };
 
-    console.log('adding event listener to pick up click events from the amr');
     window.addEventListener('message', handler)
   </script>
 </html>
