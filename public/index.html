@@ -41,61 +41,68 @@
     -->
   </body>
   <script>
+    // EVENT TRIGGERS
+    window.parent.postMessage(
+      {
+        event: 'glass.applet.ready',
+        payload: {
+          keyname: 'calculator',
+          message: 'Calculator Applet is ready.  Added the following listeners to the dom: glass.assetmap.click, glass.assetmap.working, glass.assetmap.finished'
+        }
+      },
+      'http://localhost:8000/ampux/household'
+    )
+
+    window.parent.postMessage(
+      {
+        event: 'glass.assetmap.modals',
+        payload: {
+          keyname: 'calculator',
+          disable: true,
+          message: 'No I will NOT open modals'
+        }
+      },
+      'http://localhost:8000/ampux/household'
+    )
+    
     let calcApp = document.getElementById('root')
     
     // EVENT TRIGGERS
     calcApp.addEventListener('click', e => {
       if ('dataset' in e.target) {
-        // assetmap.glass.tray.open
-        if (e.target.dataset.value == '/') {
+        if (e.target.dataset.value === '=') {
           window.parent.postMessage(
             {
-              source: 'Calculator Applet',
+              event: 'glass.applet.working',
               payload: {
-                type: 'assetmap.glass.tray.open',
-                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.open event.`,
+                keyname: 'calculator',
+                job: 'calculation equation job',
+                jobId: 1,
+                loading: true,
               }
             },
             'http://localhost:8000/ampux/household'
           )
+          setTimeout(() => {
+            window.parent.postMessage(
+              {
+                event: 'glass.applet.finished',
+                payload: {
+                  keyname: 'calculator',
+                  jobId: 1,
+                }
+              },
+              'http://localhost:8000/ampux/household'
+            )
+          }, 1000)
         }
         
-        // assetmap.glass.tray.ready
-        if (e.target.dataset.value == '*') {
+        if (e.target.dataset.value == 'c') {
           window.parent.postMessage(
             {
-              source: 'Calculator Applet',
+              event: 'glass.assetmap.state',
               payload: {
-                type: 'assetmap.glass.tray.ready',
-                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.ready event`,
-              }
-            },
-            'http://localhost:8000/ampux/household'
-          )
-        }
-
-        // assetmap.glass.tray.hide
-        if (e.target.dataset.value == '-') {
-          window.parent.postMessage(
-            {
-              source: 'Calculator Applet',
-              payload: {
-                type: 'assetmap.glass.tray.hide',
-                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.hide event.`,
-              }
-            },
-            'http://localhost:8000/ampux/household'
-          )
-        }
-
-        // assetmap.glass.tray.close
-        if (e.target.dataset.value == '+') {
-          window.parent.postMessage(
-            {
-              source: 'Calculator Applet',
-              payload: {
-                type: 'assetmap.glass.tray.close',
-                message: `Calculator Applet pressed button ${e.target.dataset.value} which triggered assetmap.glass.tray.close event.`
+                keyname: 'calculator',
               }
             },
             'http://localhost:8000/ampux/household'
@@ -103,15 +110,21 @@
         }
       }
     });
-    
+
     // EVENT LISTENERS
     const handler = (ev) => {
       if (typeof ev.data !== 'object') return;
       if (!('payload' in ev.data)) return;
-      if (!('type' in ev.data.payload)) return;
-      if (!ev.data?.payload.type.startsWith('assetmap')) return;
-      if (!ev.data?.payload.type === 'assetmap.amr.click') return;
-      console.log(`Calculator Applet - ${ev.data.payload.type}`);
+      if (!('event' in ev.data)) return;
+      if (!ev.data?.event.startsWith('glass')) return;
+      if ([
+        'glass.assetmap.click', 
+        'glass.assetmap.working', 
+        'glass.assetmap.finished'
+      ].includes(ev.data?.event)) {
+        console.log(`Calculator Applet - ${ev.data.event}`);
+        console.log(ev.data.payload);
+      }
     };
 
     window.addEventListener('message', handler)
